@@ -27,30 +27,32 @@
   <p id="hint" hidden>Kodu uygulamadaki "Mevcut Hesabı Bağla" alanına yapıştırın. Kod bir saat içinde ve yalnızca bir kez kullanılabilir.</p>
 </main>
 <script>
+(function () {
   var q = new URLSearchParams(location.search);
   var code = (q.get("code") || "").replace(/#_$/, "");
-  var status = document.getElementById("status");
+  var msg = document.getElementById("status");
   if (code) {
     var box = document.getElementById("code");
     box.value = code; box.hidden = false;
     document.getElementById("copy").hidden = false;
     document.getElementById("hint").hidden = false;
-    status.textContent = "İzin verildi. Aşağıdaki kodu kopyalayın.";
-    status.className = "ok";
+    msg.textContent = "İzin verildi. Aşağıdaki kodu kopyalayın.";
+    msg.className = "ok";
     document.getElementById("copy").onclick = function () {
       box.select();
       (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject())
         .catch(function(){ document.execCommand("copy"); })
-        .finally(function(){ status.textContent = "Kopyalandı. Uygulamaya yapıştırabilirsiniz."; });
+        .finally(function(){ msg.textContent = "Kopyalandı. Uygulamaya yapıştırabilirsiniz."; });
     };
   } else if (q.get("error")) {
-    status.textContent = "İzin verilmedi: " + (q.get("error_description") || q.get("error"));
-    status.className = "err";
+    msg.textContent = "İzin verilmedi: " + (q.get("error_description") || q.get("error"));
+    msg.className = "err";
   } else {
-    status.textContent = "Bu adreste kod bulunamadı. Uygulamadaki bağlantı linkini yeniden açın.";
-    status.className = "err";
+    msg.textContent = "Bu adreste kod bulunamadı. Uygulamadaki bağlantı linkini yeniden açın.";
+    msg.className = "err";
   }
   history.replaceState(null, "", location.pathname);
+})();
 </script>
 </body>
 </html>
